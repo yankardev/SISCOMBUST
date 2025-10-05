@@ -1,0 +1,58 @@
+﻿@model SISCOMBUST.Models.Proveedor
+
+@{
+    ViewData["Title"] = "Eliminar Proveedor";
+}
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header text-white" style="background-color:#C8102E;">
+            <h4 class="mb-0"><i class="bi bi-trash-fill"></i> Eliminar Proveedor</h4>
+        </div>
+
+        <div class="card-body bg-light">
+            <div class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                ¿Estás seguro de que deseas eliminar este proveedor? Esta acción no se puede deshacer.
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-danger">Nombre del Proveedor:</label>
+                    <p class="form-control-plaintext bg-white border rounded px-3 py-2">@Model.NombreProveedor</p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-danger">RUC:</label>
+                    <p class="form-control-plaintext bg-white border rounded px-3 py-2">@Model.RUC</p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-danger">Teléfono:</label>
+                    <p class="form-control-plaintext bg-white border rounded px-3 py-2">@Model.Telefono</p>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-danger">Correo Electrónico:</label>
+                    <p class="form-control-plaintext bg-white border rounded px-3 py-2">@Model.Correo</p>
+                </div>
+            </div>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="IdProveedor" />
+                <div class="text-end">
+                    <button type="submit" class="btn fw-bold text-white me-2"
+                            style="background-color:#C8102E;"
+                            data-bs-toggle="tooltip" title="Eliminar definitivamente al proveedor">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-outline-secondary fw-bold"
+                       data-bs-toggle="tooltip" title="Cancelar y volver a la lista de proveedores">
+                        <i class="bi bi-arrow-left-circle"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

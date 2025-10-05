@@ -1,0 +1,96 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+/*Custom styles*/ 
+..btn-outline-danger:hover {
+    background-color: #C8102E;
+    color: white;
+}
+
+.btn-outline-warning:hover {
+    background-color: #ffc107;
+    color: black;
+}
+
+.btn-outline-info:hover {
+    background-color: #0dcaf0;
+    color: white;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #fff0f0;
+}
+
+.tooltip-inner {
+    background-color: #C8102E;
+    color: #fff;
+    font-weight: 500;
+}
+
+/* Estilo general TRC */
+.card {
+    border-radius: 10px;
+}
+
+.card-header {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.form-control {
+    border: 1px solid #ddd;
+}
+
+    .form-control:focus {
+        border-color: #C8102E;
+        box-shadow: 0 0 4px rgba(200, 16, 46, 0.5);
+    }
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+.tooltip-inner {
+    background-color: #C8102E;
+    color: #fff;
+    font-weight: 500;
+}
+.text-bg-success {
+    background-color: #C8102E !important; /* rojo TRC */
+    color: #fff !important;
+}
+
+.toast-body i {
+    margin-right: 6px;
+}
+

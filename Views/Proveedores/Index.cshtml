@@ -1,0 +1,134 @@
+﻿@model IEnumerable<SISCOMBUST.Models.Proveedor>
+
+@{
+    ViewData["Title"] = "Proveedores";
+}
+
+<div class="container mt-5">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+            <div id="successToast" class="toast align-items-center text-bg-success border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-bold">
+                        <i class="bi bi-check-circle-fill"></i> @TempData["SuccessMessage"]
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card shadow border-0">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color:#C8102E;">
+            <h4 class="mb-0"><i class="bi bi-fuel-pump-fill"></i> Proveedores de Combustible</h4>
+            <a asp-action="Create" class="btn btn-light btn-sm fw-bold" data-bs-toggle="tooltip" title="Registrar un nuevo proveedor">
+                <i class="bi bi-plus-circle"></i> Nuevo Proveedor
+            </a>
+        </div>
+
+        <div class="card-body bg-light">
+            <table class="table table-hover align-middle">
+                <thead class="text-white" style="background-color:#C8102E;">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>RUC</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.NombreProveedor</td>
+                                <td>@item.RUC</td>
+                                <td>@item.Telefono</td>
+                                <td>@item.Correo</td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@item.IdProveedor" class="btn btn-outline-warning btn-sm mx-1"
+                                       data-bs-toggle="tooltip" title="Editar proveedor">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.IdProveedor" class="btn btn-outline-info btn-sm mx-1"
+                                       data-bs-toggle="tooltip" title="Ver detalles del proveedor">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm mx-1"
+                                            title="Eliminar proveedor"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            data-id="@item.IdProveedor"
+                                            data-nombre="@item.NombreProveedor">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-3">
+                                <i class="bi bi-exclamation-circle"></i> No hay proveedores registrados.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color:#C8102E;">
+                <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill"></i> Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold text-danger">¿Seguro que deseas eliminar este proveedor?</p>
+                <p id="nombreProveedor" class="fw-bold"></p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post" asp-action="Delete">
+                    <input type="hidden" name="id" id="idProveedor" />
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+                // Mostrar toast si existe
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastEl = document.getElementById('successToast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+                toast.show();
+            }
+        });
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var proveedorId = button.getAttribute('data-id');
+            var proveedorNombre = button.getAttribute('data-nombre');
+
+            var modalNombre = deleteModal.querySelector('#nombreProveedor');
+            var inputId = deleteModal.querySelector('#idProveedor');
+
+            modalNombre.textContent = proveedorNombre;
+            inputId.value = proveedorId;
+        });
+    </script>
+}
