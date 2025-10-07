@@ -1,0 +1,142 @@
+﻿@model IEnumerable<SISCOMBUST.Models.Compra>
+
+@{
+    ViewData["Title"] = "Compras Realizadas";
+    var totalGalones = Model?.Sum(c => c.GalonesComprados) ?? 0;
+    var totalMonto = Model?.Sum(c => c.MontoTotal) ?? 0;
+    var proveedorTop = Model?
+        .GroupBy(c => c.Proveedor?.NombreProveedor)
+        .OrderByDescending(g => g.Sum(x => x.MontoTotal))
+        .FirstOrDefault()?.Key ?? "N/A";
+}
+
+<div class="container mt-5">
+    <div class="mb-4">
+        <h3 class="fw-bold text-danger">
+            <i class="bi bi-cart-check-fill"></i> Compras Realizadas
+        </h3>
+        <p class="text-muted">Resumen de las adquisiciones de combustible registradas.</p>
+    </div>
+
+    <!-- Tarjetas resumen -->
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4" style="background:linear-gradient(135deg,#C8102E,#8B0000); color:white;">
+                <div class="card-body">
+                    <i class="bi bi-fuel-pump-fill fs-2"></i>
+                    <h5 class="mt-2">Galones Comprados</h5>
+                    <h3 class="fw-bold">@totalGalones.ToString("N2") GL</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4" style="background:linear-gradient(135deg,#C8102E,#FF4040); color:white;">
+                <div class="card-body">
+                    <i class="bi bi-currency-dollar fs-2"></i>
+                    <h5 class="mt-2">Monto Total</h5>
+                    <h3 class="fw-bold">S/ @totalMonto.ToString("N2")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4" style="background:linear-gradient(135deg,#8B0000,#C8102E); color:white;">
+                <div class="card-body">
+                    <i class="bi bi-building fs-2"></i>
+                    <h5 class="mt-2">Proveedor Destacado</h5>
+                    <h4 class="fw-bold">@proveedorTop</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card shadow border-0 rounded-4">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color:#C8102E;">
+            <h5 class="mb-0"><i class="bi bi-list-ul"></i> Historial de Compras</h5>
+            <a asp-action="Create" class="btn btn-light btn-sm fw-bold" data-bs-toggle="tooltip" title="Registrar nueva compra">
+                <i class="bi bi-plus-circle"></i> Nueva Compra
+            </a>
+        </div>
+        <div class="card-body bg-light">
+            <table class="table table-hover align-middle">
+                <thead class="text-white" style="background-color:#C8102E;">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Proveedor</th>
+                        <th>Galones</th>
+                        <th>Precio x Galón</th>
+                        <th>Monto Total</th>
+                        <th>Factura</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.FechaCompra.ToString("dd/MM/yyyy")</td>
+                                <td>@item.Proveedor?.NombreProveedor</td>
+                                <td>@item.GalonesComprados.ToString("N2")</td>
+                                <td>@item.PrecioPorGalon.ToString("N2")</td>
+                                <td class="fw-bold text-danger">S/ @item.MontoTotal.ToString("N2")</td>
+                                <td>@item.NumeroFactura</td>
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@item.IdCompra" class="btn btn-outline-info btn-sm mx-1" title="Ver detalles"><i class="bi bi-eye"></i></a>
+                                    <a asp-action="Edit" asp-route-id="@item.IdCompra" class="btn btn-outline-warning btn-sm mx-1" title="Editar compra"><i class="bi bi-pencil-square"></i></a>
+                                    <button class="btn btn-outline-danger btn-sm mx-1" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@item.IdCompra" data-proveedor="@item.Proveedor?.NombreProveedor"><i class="bi bi-trash"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="7" class="text-center text-muted py-3"><i class="bi bi-exclamation-circle"></i> No hay compras registradas.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color:#C8102E;">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill"></i> Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold text-danger">¿Deseas eliminar esta compra?</p>
+                <p id="proveedorNombre" class="fw-bold"></p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post">
+                    <input type="hidden" name="id" id="idCompra" />
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteForm = document.getElementById('deleteForm');
+        const idInput = document.getElementById('idCompra');
+        const proveedorNombre = document.getElementById('proveedorNombre');
+
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-id');
+            const nombre = button.getAttribute('data-proveedor');
+            proveedorNombre.textContent = "Proveedor: " + nombre;
+            idInput.value = id;
+            deleteForm.action = '/Compras/Delete/' + id;
+        });
+    </script>
+}

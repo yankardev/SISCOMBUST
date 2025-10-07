@@ -1,0 +1,130 @@
+﻿@model IEnumerable<SISCOMBUST.Models.SolicitudCompra>
+
+@{
+    ViewData["Title"] = "Solicitudes de Compra";
+}
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color:#C8102E;">
+            <h4 class="mb-0"><i class="bi bi-file-earmark-text-fill"></i> Solicitudes de Compra</h4>
+            <a asp-action="Create" class="btn btn-light btn-sm fw-bold" data-bs-toggle="tooltip" title="Registrar nueva solicitud">
+                <i class="bi bi-plus-circle"></i> Nueva Solicitud
+            </a>
+        </div>
+
+        <div class="card-body bg-light">
+            <table class="table table-hover align-middle">
+                <thead class="text-white" style="background-color:#C8102E;">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Proveedor</th>
+                        <th>Galones</th>
+                        <th>Precio x Galón</th>
+                        <th>Monto Estimado</th>
+                        <th>Estado</th>
+                        <th>Solicitante</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.FechaSolicitud.ToString("dd/MM/yyyy")</td>
+                                <td>@item.Proveedor?.NombreProveedor</td>
+                                <td>@item.GalonesSolicitados</td>
+                                <td>@item.PrecioReferencial</td>
+                                <td>@item.MontoEstimado</td>
+                                <td>
+                                    @if (item.Estado == "Aprobado")
+                                    {
+                                        <span class="badge bg-success">@item.Estado</span>
+                                    }
+                                    else if (item.Estado == "Rechazado")
+                                    {
+                                        <span class="badge bg-danger">@item.Estado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">@item.Estado</span>
+                                    }
+                                </td>
+                                <td>@item.Solicitante</td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@item.IdSolicitud" class="btn btn-outline-warning btn-sm mx-1" data-bs-toggle="tooltip" title="Editar solicitud">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.IdSolicitud" class="btn btn-outline-info btn-sm mx-1" data-bs-toggle="tooltip" title="Ver detalles">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm mx-1"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            data-id="@item.IdSolicitud"
+                                            data-proveedor="@item.Proveedor?.NombreProveedor">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-3">
+                                <i class="bi bi-exclamation-circle"></i> No hay solicitudes registradas.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color:#C8102E;">
+                <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill"></i> Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold text-danger">¿Seguro que deseas eliminar esta solicitud?</p>
+                <p id="proveedorNombre" class="fw-bold"></p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post">
+                    <input type="hidden" name="id" id="idSolicitud" />
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteForm = document.getElementById('deleteForm');
+        const idInput = document.getElementById('idSolicitud');
+        const proveedorNombre = document.getElementById('proveedorNombre');
+
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-id');
+            const nombre = button.getAttribute('data-proveedor');
+
+            proveedorNombre.textContent = "Proveedor: " + nombre;
+            idInput.value = id;
+            deleteForm.action = '/SolicitudCompras/Delete/' + id;
+        });
+    </script>
+}

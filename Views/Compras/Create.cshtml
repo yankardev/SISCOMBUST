@@ -1,0 +1,81 @@
+﻿@model SISCOMBUST.Models.Compra
+
+@{
+    ViewData["Title"] = "Registrar Compra";
+}
+
+<div class="container mt-5">
+    <div class="card border-0 shadow-lg rounded-4">
+        <div class="card-header text-white" style="background: linear-gradient(90deg,#8B0000,#C8102E);">
+            <h4 class="mb-0"><i class="bi bi-cart-check-fill"></i> Registrar Compra de Combustible</h4>
+        </div>
+        <div class="card-body bg-light p-4">
+            <form asp-action="Create" method="post" class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="FechaCompra" class="form-label fw-bold"></label>
+                    <input asp-for="FechaCompra" class="form-control" type="date" />
+                    <span asp-validation-for="FechaCompra" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="IdProveedor" class="form-label fw-bold"></label>
+                    <select asp-for="IdProveedor" class="form-select" asp-items="ViewBag.IdProveedor">
+                        <option value="">-- Seleccione un proveedor --</option>
+                    </select>
+                    <span asp-validation-for="IdProveedor" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="NumeroFactura" class="form-label fw-bold"></label>
+                    <input asp-for="NumeroFactura" class="form-control" placeholder="Ej. F001-123456" />
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="GalonesComprados" class="form-label fw-bold"></label>
+                    <input asp-for="GalonesComprados" class="form-control" id="galones" />
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="PrecioPorGalon" class="form-label fw-bold"></label>
+                    <input asp-for="PrecioPorGalon" class="form-control" id="precio" />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Monto Total (S/.)</label>
+                    <input type="text" class="form-control bg-white" id="montoTotal" readonly />
+                </div>
+
+                <div class="col-md-12">
+                    <label asp-for="Observacion" class="form-label fw-bold"></label>
+                    <textarea asp-for="Observacion" class="form-control" rows="3" placeholder="Ingrese detalles adicionales..."></textarea>
+                </div>
+
+                <div class="col-12 d-flex justify-content-between mt-3">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                    <button type="submit" class="btn text-white fw-bold px-4" style="background-color:#C8102E;">
+                        <i class="bi bi-check-circle-fill"></i> Guardar Compra
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const galones = document.getElementById("galones");
+        const precio = document.getElementById("precio");
+        const montoTotal = document.getElementById("montoTotal");
+
+        function calcularMonto() {
+            const g = parseFloat(galones.value) || 0;
+            const p = parseFloat(precio.value) || 0;
+            montoTotal.value = (g * p).toFixed(2);
+        }
+
+        galones.addEventListener("input", calcularMonto);
+        precio.addEventListener("input", calcularMonto);
+    </script>
+}

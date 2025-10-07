@@ -1,0 +1,34 @@
+﻿@model SISCOMBUST.Models.SolicitudCompra
+@{
+    ViewData["Title"] = "Eliminar Solicitud";
+}
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header text-white" style="background-color:#C8102E;">
+            <h4 class="mb-0"><i class="bi bi-trash"></i> Eliminar Solicitud</h4>
+        </div>
+
+        <div class="card-body bg-light">
+            <p class="fw-bold text-danger">¿Seguro que deseas eliminar esta solicitud?</p>
+            <dl class="row">
+                <dt class="col-sm-3">Proveedor</dt>
+                <dd class="col-sm-9">@Model.Proveedor?.NombreProveedor</dd>
+                <dt class="col-sm-3">Galones</dt>
+                <dd class="col-sm-9">@Model.GalonesSolicitados</dd>
+                <dt class="col-sm-3">Estado</dt>
+                <dd class="col-sm-9">@Model.Estado</dd>
+            </dl>
+        </div>
+
+        <div class="card-footer text-end">
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="IdSolicitud" />
+                <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left-circle"></i> Cancelar</a>
+                <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;">
+                    <i class="bi bi-trash"></i> Confirmar Eliminación
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

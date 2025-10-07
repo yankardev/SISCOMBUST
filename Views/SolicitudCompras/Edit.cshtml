@@ -1,0 +1,86 @@
+﻿@model SISCOMBUST.Models.SolicitudCompra
+@{
+    ViewData["Title"] = "Editar Solicitud de Compra";
+}
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header text-white" style="background-color:#C8102E;">
+            <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Editar Solicitud de Compra</h4>
+        </div>
+
+        <div class="card-body bg-light">
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="IdSolicitud" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="FechaSolicitud" class="form-label fw-bold"></label>
+                        <input asp-for="FechaSolicitud" class="form-control" type="date" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="IdProveedor" class="form-label fw-bold"></label>
+                        <select asp-for="IdProveedor" class="form-select" asp-items="ViewBag.IdProveedor"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Solicitante" class="form-label fw-bold"></label>
+                        <input asp-for="Solicitante" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label asp-for="GalonesSolicitados" class="form-label fw-bold"></label>
+                        <input asp-for="GalonesSolicitados" class="form-control" id="galonesInput" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="PrecioReferencial" class="form-label fw-bold"></label>
+                        <input asp-for="PrecioReferencial" class="form-control" id="precioInput" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Monto Estimado</label>
+                        <input type="text" class="form-control bg-white" id="montoEstimado" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Estado" class="form-label fw-bold"></label>
+                        <select asp-for="Estado" class="form-select">
+                            <option>Pendiente</option>
+                            <option>Aprobado</option>
+                            <option>Rechazado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Observacion" class="form-label fw-bold"></label>
+                    <textarea asp-for="Observacion" class="form-control"></textarea>
+                </div>
+
+                <div class="text-end">
+                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left-circle"></i> Volver</a>
+                    <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;"><i class="bi bi-save"></i> Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const galones = document.getElementById("galonesInput");
+        const precio = document.getElementById("precioInput");
+        const monto = document.getElementById("montoEstimado");
+
+        function calcularMonto() {
+            const g = parseFloat(galones.value) || 0;
+            const p = parseFloat(precio.value) || 0;
+            monto.value = (g * p).toFixed(2);
+        }
+
+        galones.addEventListener("input", calcularMonto);
+        precio.addEventListener("input", calcularMonto);
+        calcularMonto();
+    </script>
+}

@@ -1,0 +1,36 @@
+﻿@model SISCOMBUST.Models.Consumo
+@{
+    ViewData["Title"] = "Detalles del Consumo";
+}
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
+            <i class="bi bi-eye"></i> Detalles del Registro
+        </div>
+        <div class="card-body bg-light">
+            <dl class="row">
+                <dt class="col-sm-3">Fecha</dt>
+                <dd class="col-sm-9">@Model.Fecha.ToString("dd/MM/yyyy")</dd>
+                <dt class="col-sm-3">Operación</dt>
+                <dd class="col-sm-9">@Model.Operacion</dd>
+                <dt class="col-sm-3">Ruta</dt>
+                <dd class="col-sm-9">@Model.Ruta</dd>
+                <dt class="col-sm-3">Unidades</dt>
+                <dd class="col-sm-9">@Model.Unidades</dd>
+                <dt class="col-sm-3">Galones por Unidad</dt>
+                <dd class="col-sm-9">@Model.GalonesPorUnidad</dd>
+                <dt class="col-sm-3">Galones Consumidos</dt>
+                <dd class="col-sm-9">@Model.GalonesConsumidos</dd>
+                <dt class="col-sm-3">Supervisor</dt>
+                <dd class="col-sm-9">@Model.Supervisor</dd>
+                <dt class="col-sm-3">Observación</dt>
+                <dd class="col-sm-9">@Model.Observacion</dd>
+            </dl>
+            <div class="text-end">
+                <a asp-action="Edit" asp-route-id="@Model.IdConsumo" class="btn btn-warning"><i class="bi bi-pencil"></i> Editar</a>
+                <a asp-action="Index" class="btn btn-secondary">Volver</a>
+            </div>
+        </div>
+    </div>
+</div>

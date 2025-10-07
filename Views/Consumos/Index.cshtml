@@ -1,0 +1,228 @@
+﻿@model IEnumerable<SISCOMBUST.Models.Consumo>
+@{
+    ViewData["Title"] = "Control de Consumos";
+}
+
+<div class="container mt-4">
+    <!-- ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-danger"><i class="bi bi-fuel-pump-fill"></i> Control Diario de Consumos</h3>
+        <a asp-action="Create" class="btn text-white fw-bold" style="background-color:#C8102E;">
+            <i class="bi bi-plus-circle"></i> Nuevo Registro
+        </a>
+    </div>
+
+    <!-- TARJETAS RESUMEN -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-calendar2-day fs-1 text-danger"></i>
+                    <h6 class="fw-bold mt-2 text-secondary">Registros del Día</h6>
+                    <h4 class="fw-bold">@Model.Count()</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-truck-front-fill fs-1 text-danger"></i>
+                    <h6 class="fw-bold mt-2 text-secondary">Total de Unidades</h6>
+                    <h4 class="fw-bold">@Model.Sum(c => c.Unidades)</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-fuel-pump fs-1 text-danger"></i>
+                    <h6 class="fw-bold mt-2 text-secondary">Galones Consumidos</h6>
+                    <h4 class="fw-bold">@Model.Sum(c => c.GalonesConsumidos)</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-clipboard2-data-fill fs-1 text-danger"></i>
+                    <h6 class="fw-bold mt-2 text-secondary">Operaciones Registradas</h6>
+                    <h4 class="fw-bold">@Model.Select(c => c.Operacion).Distinct().Count()</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VISUAL -->
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
+            <i class="bi bi-graph-up"></i> Dashboard de Consumo
+        </div>
+        <div class="card-body bg-light">
+            <!-- PESTAÑAS -->
+            <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold text-danger" id="tab-operacion" data-bs-toggle="tab" data-bs-target="#grafico-operacion" type="button" role="tab">
+                        <i class="bi bi-bar-chart"></i> Por Operación
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold text-danger" id="tab-ruta" data-bs-toggle="tab" data-bs-target="#grafico-ruta" type="button" role="tab">
+                        <i class="bi bi-pie-chart"></i> Por Ruta
+                    </button>
+                </li>
+            </ul>
+
+            <!-- CONTENIDO DE LAS PESTAÑAS -->
+            <div class="tab-content mt-4" id="dashboardTabsContent">
+                <div class="tab-pane fade show active" id="grafico-operacion" role="tabpanel">
+                    <canvas id="chartOperacion" height="120"></canvas>
+                </div>
+                <div class="tab-pane fade" id="grafico-ruta" role="tabpanel">
+                    <canvas id="chartRuta" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="card shadow border-0">
+        <div class="card-header text-white" style="background-color:#C8102E;">
+            <h5 class="mb-0"><i class="bi bi-list-task"></i> Detalle de Consumos</h5>
+        </div>
+        <div class="card-body bg-light">
+            <table class="table table-hover align-middle">
+                <thead class="text-white" style="background-color:#C8102E;">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Operación</th>
+                        <th>Ruta</th>
+                        <th>Unidades</th>
+                        <th>Gal/Unidad</th>
+                        <th>Total Galones</th>
+                        <th>Supervisor</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                <td>@item.Operacion</td>
+                                <td>@item.Ruta</td>
+                                <td>@item.Unidades</td>
+                                <td>@item.GalonesPorUnidad</td>
+                                <td>@item.GalonesConsumidos</td>
+                                <td>@item.Supervisor</td>
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@item.IdConsumo" class="btn btn-outline-warning btn-sm mx-1" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                                    <a asp-action="Details" asp-route-id="@item.IdConsumo" class="btn btn-outline-info btn-sm mx-1" title="Detalles"><i class="bi bi-eye"></i></a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm mx-1" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-id="@item.IdConsumo" data-operacion="@item.Operacion">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-3"><i class="bi bi-exclamation-circle"></i> No hay registros de consumo.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ELIMINACIÓN -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color:#C8102E;">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill"></i> Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold text-danger">¿Deseas eliminar este registro de consumo?</p>
+                <p id="operacionNombre" class="fw-bold"></p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post">
+                    <input type="hidden" name="id" id="idConsumo" />
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Modal eliminación
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-id');
+            const nombre = button.getAttribute('data-operacion');
+            document.getElementById('operacionNombre').textContent = "Operación: " + nombre;
+            document.getElementById('idConsumo').value = id;
+            document.getElementById('deleteForm').action = '/Consumos/Delete/' + id;
+        });
+
+        // === Dashboard Charts ===
+        const consumos = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    Model.Select(c => new { c.Operacion, c.Ruta, c.GalonesConsumidos })
+            ));
+
+    const porOperacion = {};
+    const porRuta = {};
+    consumos.forEach(c => {
+        porOperacion[c.Operacion] = (porOperacion[c.Operacion] || 0) + c.GalonesConsumidos;
+        porRuta[c.Ruta] = (porRuta[c.Ruta] || 0) + c.GalonesConsumidos;
+    });
+
+        const colores = ['#C8102E', '#FF5733', '#900C3F', '#B03A2E', '#566573', '#7B241C', '#DC7633', '#641E16', '#A93226', '#884EA0'];
+
+        // Por operación
+        new Chart(document.getElementById('chartOperacion'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(porOperacion),
+                datasets: [{
+                    label: 'Galones Consumidos',
+                    data: Object.values(porOperacion),
+                    backgroundColor: Object.keys(porOperacion).map((_, i) => colores[i % colores.length]),
+                    borderColor: '#C8102E',
+                    borderWidth: 2,
+                    borderRadius: 6
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } } }
+        });
+
+        // Por ruta
+        new Chart(document.getElementById('chartRuta'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(porRuta),
+                datasets: [{
+                    data: Object.values(porRuta),
+                    backgroundColor: Object.keys(porRuta).map((_, i) => colores[i % colores.length]),
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: { plugins: { legend: { position: 'right' } } }
+        });
+    </script>
+}

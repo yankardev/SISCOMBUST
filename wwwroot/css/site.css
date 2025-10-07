@@ -93,4 +93,9 @@ body {
 .toast-body i {
     margin-right: 6px;
 }
+/* Animación visual al eliminar */
+.row-deleted {
+    background-color: rgba(200, 16, 46, 0.15) !important;
+    transition: background-color 0.8s ease-out;
+}
 

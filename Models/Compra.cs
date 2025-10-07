@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SISCOMBUST.Models
@@ -9,22 +8,36 @@ namespace SISCOMBUST.Models
         [Key]
         public int IdCompra { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "La fecha de compra es obligatoria")]
+        [DataType(DataType.Date)]
         public DateTime FechaCompra { get; set; }
 
-        [Precision(10, 2)]
+        [Required]
+        [Display(Name = "Proveedor")]
+        public int IdProveedor { get; set; }
+       
+        [ForeignKey("IdProveedor")]
+        public Proveedor? Proveedor { get; set; }
+
+        [Required]
+        [Display(Name = "Galones comprados")]
+        [Column(TypeName = "decimal(10,2)")]
         public decimal GalonesComprados { get; set; }
 
-        [Precision(10, 3)]
+        [Required]
+        [Display(Name = "Precio por galón (S/.)")]
+        [Column(TypeName = "decimal(10,2)")]
         public decimal PrecioPorGalon { get; set; }
 
-        [NotMapped]
-        public decimal Total => GalonesComprados * PrecioPorGalon;
+        [Display(Name = "Monto total (S/.)")]
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal MontoTotal => GalonesComprados * PrecioPorGalon;
 
+        [StringLength(20)]
+        [Display(Name = "N° de factura")]
+        public string? NumeroFactura { get; set; }
 
-        // Relación con Proveedor
-        public int IdProveedor { get; set; }
-        [ForeignKey("IdProveedor")]
-        public Proveedor Proveedor { get; set; }
+        [StringLength(200)]
+        public string? Observacion { get; set; }
     }
 }

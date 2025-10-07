@@ -1,0 +1,61 @@
+﻿@model SISCOMBUST.Models.Consumo
+@{
+    ViewData["Title"] = "Editar Consumo";
+}
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
+            <i class="bi bi-pencil-square"></i> Editar Registro de Consumo
+        </div>
+        <div class="card-body bg-light">
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="IdConsumo" />
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="Fecha" class="form-label fw-bold"></label>
+                        <input asp-for="Fecha" class="form-control" type="date" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Operacion" class="form-label fw-bold"></label>
+                        <input asp-for="Operacion" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Ruta" class="form-label fw-bold"></label>
+                        <input asp-for="Ruta" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Unidades" class="form-label fw-bold"></label>
+                        <input asp-for="Unidades" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="GalonesPorUnidad" class="form-label fw-bold"></label>
+                        <input asp-for="GalonesPorUnidad" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="GalonesConsumidos" class="form-label fw-bold"></label>
+                        <input asp-for="GalonesConsumidos" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="FechaSalida" class="form-label fw-bold"></label>
+                        <input asp-for="FechaSalida" class="form-control" type="date" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Supervisor" class="form-label fw-bold"></label>
+                        <input asp-for="Supervisor" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Observacion" class="form-label fw-bold"></label>
+                        <input asp-for="Observacion" class="form-control" />
+                    </div>
+                </div>
+                <div class="mt-4 text-end">
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;">
+                        <i class="bi bi-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

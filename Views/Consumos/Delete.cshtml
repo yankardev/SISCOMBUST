@@ -1,0 +1,28 @@
+﻿@model SISCOMBUST.Models.Consumo
+@{
+    ViewData["Title"] = "Eliminar Consumo";
+}
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
+            <i class="bi bi-trash"></i> Confirmar Eliminación
+        </div>
+        <div class="card-body bg-light">
+            <h5 class="text-danger">¿Estás seguro de eliminar el siguiente registro?</h5>
+            <p><strong>Operación:</strong> @Model.Operacion</p>
+            <p><strong>Ruta:</strong> @Model.Ruta</p>
+            <p><strong>Supervisor:</strong> @Model.Supervisor</p>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="IdConsumo" />
+                <div class="text-end">
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                    <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,100 @@
+﻿@model SISCOMBUST.Models.Consumo
+
+@{
+    ViewData["Title"] = "Registrar Consumo Diario";
+}
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header text-white" style="background-color:#C8102E;">
+            <h4 class="mb-0"><i class="bi bi-fuel-pump"></i> Registrar Consumo Diario</h4>
+        </div>
+
+        <div class="card-body bg-light">
+            <form asp-action="Create" id="consumoForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label asp-for="Fecha" class="form-label fw-bold"></label>
+                        <input asp-for="Fecha" class="form-control" type="date" />
+                        <span asp-validation-for="Fecha" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Operacion" class="form-label fw-bold"></label>
+                        <input asp-for="Operacion" class="form-control" placeholder="Ej. GDP, GFLC, GLP, etc." />
+                        <span asp-validation-for="Operacion" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Ruta" class="form-label fw-bold"></label>
+                        <input asp-for="Ruta" class="form-control" placeholder="Ej. TRJ-LIM, TRJ-CJC..." />
+                        <span asp-validation-for="Ruta" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label asp-for="Unidades" class="form-label fw-bold"></label>
+                        <input asp-for="Unidades" class="form-control" id="unidadesInput" />
+                        <span asp-validation-for="Unidades" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="GalonesPorUnidad" class="form-label fw-bold"></label>
+                        <input asp-for="GalonesPorUnidad" class="form-control" id="galonesUnidadInput" />
+                        <span asp-validation-for="GalonesPorUnidad" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="GalonesConsumidos" class="form-label fw-bold"></label>
+                        <input asp-for="GalonesConsumidos" class="form-control bg-white" id="totalGalonesInput" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="FechaSalida" class="form-label fw-bold"></label>
+                        <input asp-for="FechaSalida" class="form-control" type="date" />
+                        <span asp-validation-for="FechaSalida" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Supervisor" class="form-label fw-bold"></label>
+                        <input asp-for="Supervisor" class="form-control" placeholder="Nombre del supervisor" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Observacion" class="form-label fw-bold"></label>
+                        <textarea asp-for="Observacion" class="form-control" placeholder="Comentarios u observaciones"></textarea>
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left-circle"></i> Volver
+                    </a>
+                    <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;">
+                        <i class="bi bi-save"></i> Guardar Registro
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Cálculo automático de galones totales
+        const unidadesInput = document.getElementById("unidadesInput");
+        const galonesUnidadInput = document.getElementById("galonesUnidadInput");
+        const totalGalonesInput = document.getElementById("totalGalonesInput");
+
+        function calcularTotal() {
+            const unidades = parseFloat(unidadesInput.value) || 0;
+            const galonesUnidad = parseFloat(galonesUnidadInput.value) || 0;
+            const total = unidades * galonesUnidad;
+            totalGalonesInput.value = total.toFixed(2);
+        }
+
+        unidadesInput.addEventListener("input", calcularTotal);
+        galonesUnidadInput.addEventListener("input", calcularTotal);
+    </script>
+}
