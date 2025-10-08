@@ -12,6 +12,27 @@
         </a>
     </div>
 
+    <!-- FILTRO DE FECHAS -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form id="filtroForm" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="fechaInicio" class="form-label fw-bold text-secondary">Desde</label>
+                    <input type="date" id="fechaInicio" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label for="fechaFin" class="form-label fw-bold text-secondary">Hasta</label>
+                    <input type="date" id="fechaFin" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn text-white fw-bold w-100" style="background-color:#C8102E;">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- TARJETAS RESUMEN -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
@@ -47,38 +68,6 @@
                     <i class="bi bi-clipboard2-data-fill fs-1 text-danger"></i>
                     <h6 class="fw-bold mt-2 text-secondary">Operaciones Registradas</h6>
                     <h4 class="fw-bold">@Model.Select(c => c.Operacion).Distinct().Count()</h4>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- DASHBOARD VISUAL -->
-    <div class="card shadow border-0 mb-4">
-        <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
-            <i class="bi bi-graph-up"></i> Dashboard de Consumo
-        </div>
-        <div class="card-body bg-light">
-            <!-- PESTAÑAS -->
-            <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active fw-bold text-danger" id="tab-operacion" data-bs-toggle="tab" data-bs-target="#grafico-operacion" type="button" role="tab">
-                        <i class="bi bi-bar-chart"></i> Por Operación
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-bold text-danger" id="tab-ruta" data-bs-toggle="tab" data-bs-target="#grafico-ruta" type="button" role="tab">
-                        <i class="bi bi-pie-chart"></i> Por Ruta
-                    </button>
-                </li>
-            </ul>
-
-            <!-- CONTENIDO DE LAS PESTAÑAS -->
-            <div class="tab-content mt-4" id="dashboardTabsContent">
-                <div class="tab-pane fade show active" id="grafico-operacion" role="tabpanel">
-                    <canvas id="chartOperacion" height="120"></canvas>
-                </div>
-                <div class="tab-pane fade" id="grafico-ruta" role="tabpanel">
-                    <canvas id="chartRuta" height="120"></canvas>
                 </div>
             </div>
         </div>
@@ -136,6 +125,43 @@
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+<!-- DASHBOARD VISUAL -->
+<div class="card shadow border-0 mb-4">
+    <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
+        <i class="bi bi-graph-up"></i> Dashboard de Consumo
+    </div>
+    <div class="card-body bg-light">
+        <!-- PESTAÑAS -->
+        <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold text-danger" id="tab-operacion" data-bs-toggle="tab" data-bs-target="#grafico-operacion" type="button" role="tab">
+                    <i class="bi bi-bar-chart"></i> Por Operación
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold text-danger" id="tab-ruta" data-bs-toggle="tab" data-bs-target="#grafico-ruta" type="button" role="tab">
+                    <i class="bi bi-pie-chart"></i> Por Ruta
+                </button>
+            </li>
+        </ul>
+
+        <!-- CONTENIDO DE LAS PESTAÑAS -->
+        <div class="tab-content mt-4" id="dashboardTabsContent">
+            <div class="tab-pane fade show active" id="grafico-operacion" role="tabpanel">
+                <canvas id="chartOperacion" height="100"></canvas>
+            </div>
+            <div class="tab-pane fade" id="grafico-ruta" role="tabpanel">
+                <div class="d-flex justify-content-center">
+                    <div style="width: 60%; max-width: 500px;">
+                        <canvas id="chartRuta" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -210,7 +236,7 @@
             options: { responsive: true, plugins: { legend: { display: false } } }
         });
 
-        // Por ruta
+          // Por ruta
         new Chart(document.getElementById('chartRuta'), {
             type: 'pie',
             data: {
@@ -222,7 +248,84 @@
                     borderColor: '#fff'
                 }]
             },
-            options: { plugins: { legend: { position: 'right' } } }
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 15, padding: 15 } },
+                    title: { display: false }
+                },
+                layout: {
+                    padding: { top: 10, bottom: 10 }
+                }
+            }
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('filtroForm');
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const inicio = document.getElementById('fechaInicio').value;
+                const fin = document.getElementById('fechaFin').value;
+
+                fetch(`/Consumos/GetResumen?fechaInicio=${inicio}&fechaFin=${fin}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        // 🔢 Actualizar tarjetas
+                        document.querySelectorAll('.card-body h4')[0].innerText = data.totalRegistros;
+                        document.querySelectorAll('.card-body h4')[1].innerText = data.totalUnidades;
+                        document.querySelectorAll('.card-body h4')[2].innerText = data.totalGalones;
+                        document.querySelectorAll('.card-body h4')[3].innerText = data.operaciones;
+
+                        // 🧭 Actualizar gráficos
+                        actualizarGraficos(data.graficoOperacion, data.graficoRuta);
+                    });
+            });
+        });
+
+        let chartOperacion, chartRuta;
+
+        function actualizarGraficos(operaciones, rutas) {
+            const colores = ['#C8102E', '#FF5733', '#900C3F', '#B03A2E', '#566573', '#7B241C', '#DC7633', '#641E16', '#A93226', '#884EA0'];
+
+            // 🟩 Gráfico de barras
+            const ctx1 = document.getElementById('chartOperacion').getContext('2d');
+            if (chartOperacion) chartOperacion.destroy();
+            chartOperacion = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: operaciones.map(o => o.Operacion),
+                    datasets: [{
+                        label: 'Galones Consumidos',
+                        data: operaciones.map(o => o.Galones),
+                        backgroundColor: colores,
+                        borderColor: '#C8102E',
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+
+            // 🟠 Gráfico circular
+            const ctx2 = document.getElementById('chartRuta').getContext('2d');
+            if (chartRuta) chartRuta.destroy();
+            chartRuta = new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                    labels: rutas.map(r => r.Ruta),
+                    datasets: [{
+                        data: rutas.map(r => r.Galones),
+                        backgroundColor: colores,
+                        borderWidth: 1
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+    </script>
+
 }

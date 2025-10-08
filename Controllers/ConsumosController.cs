@@ -153,5 +153,37 @@ namespace SISCOMBUST.Controllers
         {
             return _context.Consumos.Any(e => e.IdConsumo == id);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetResumen(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            var consumos = await _context.Consumos.ToListAsync();
+
+            if (fechaInicio.HasValue && fechaFin.HasValue)
+            {
+                consumos = consumos
+                    .Where(c => c.Fecha >= fechaInicio.Value && c.Fecha <= fechaFin.Value)
+                    .ToList();
+            }
+
+            var resumen = new
+            {
+                totalRegistros = consumos.Count,
+                totalUnidades = consumos.Sum(c => c.Unidades),
+                totalGalones = consumos.Sum(c => c.GalonesConsumidos),
+                operaciones = consumos.Select(c => c.Operacion).Distinct().Count(),
+                graficoOperacion = consumos
+                    .GroupBy(c => c.Operacion)
+                    .Select(g => new { Operacion = g.Key, Galones = g.Sum(x => x.GalonesConsumidos) })
+                    .ToList(),
+                graficoRuta = consumos
+                    .GroupBy(c => c.Ruta)
+                    .Select(g => new { Ruta = g.Key, Galones = g.Sum(x => x.GalonesConsumidos) })
+                    .ToList()
+            };
+
+            return Json(resumen);
+        }
+
     }
 }

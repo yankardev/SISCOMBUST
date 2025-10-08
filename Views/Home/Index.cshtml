@@ -1,8 +1,203 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Panel Principal";
+    var fechaHoy = DateTime.Now.ToString("dddd, dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"));
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid mt-4">
+    <!-- ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-danger mb-1">
+                <i class="bi bi-speedometer2"></i> Bienvenido al Panel General
+            </h3>
+            <p class="text-muted mb-0">
+                <i class="bi bi-calendar-date"></i> @fechaHoy
+            </p>
+        </div>
+        <div>
+            <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-2 rounded-pill fw-semibold">
+                <i class="bi bi-person-badge"></i> Supervisor de Combustible
+            </span>
+        </div>
+    </div>
+
+    <!-- TARJETAS RESUMEN -->
+    <div class="row g-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-truck fs-1 text-danger"></i>
+                    <h6 class="text-secondary fw-bold mt-2">Proveedores</h6>
+                    <h3 class="fw-bold text-dark">@ViewBag.TotalProveedores</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-file-earmark-text-fill fs-1 text-danger"></i>
+                    <h6 class="text-secondary fw-bold mt-2">Solicitudes Pendientes</h6>
+                    <h3 class="fw-bold text-dark">@ViewBag.SolicitudesPendientes</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-basket2-fill fs-1 text-danger"></i>
+                    <h6 class="text-secondary fw-bold mt-2">Compras Realizadas</h6>
+                    <h3 class="fw-bold text-dark">@ViewBag.ComprasTotales</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-fuel-pump-fill fs-1 text-danger"></i>
+                    <h6 class="text-secondary fw-bold mt-2">Consumos Registrados</h6>
+                    <h3 class="fw-bold text-dark">@ViewBag.ConsumosTotales</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE GRÁFICOS -->
+    <div class="row mt-5 g-4">
+        <!-- Gráfico de Consumo Mensual -->
+        <div class="col-lg-7">
+            <div class="card shadow border-0">
+                <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
+                    <i class="bi bi-bar-chart-line-fill"></i> Consumo Mensual (Galones)
+                </div>
+                <div class="card-body bg-light">
+                    <canvas id="chartConsumoMensual" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Compras por Proveedor -->
+        <div class="col-lg-5">
+            <div class="card shadow border-0">
+                <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
+                    <i class="bi bi-pie-chart-fill"></i> Compras por Proveedor
+                </div>
+                <div class="card-body bg-light d-flex justify-content-center">
+                    <div style="width:90%; max-width:400px;">
+                        <canvas id="chartComprasProveedor" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESUMEN ANUAL -->
+    <div class="card shadow border-0 mt-5">
+        <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
+            <i class="bi bi-calendar3"></i> Resumen del Año @DateTime.Now.Year
+        </div>
+        <div class="card-body bg-light">
+            <div class="row text-center g-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bi bi-fuel-pump-fill fs-1 text-danger"></i>
+                            <h6 class="fw-bold text-secondary mt-2">Galones Consumidos</h6>
+                            <h4 class="fw-bold text-dark">@ViewBag.GalonesAnuales.ToString("N2")</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bi bi-clipboard-data-fill fs-1 text-danger"></i>
+                            <h6 class="fw-bold text-secondary mt-2">Operaciones Únicas</h6>
+                            <h4 class="fw-bold text-dark">@ViewBag.OperacionesUnicas</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bi bi-person-lines-fill fs-1 text-danger"></i>
+                            <h6 class="fw-bold text-secondary mt-2">Proveedores Activos</h6>
+                            <h4 class="fw-bold text-dark">@ViewBag.ProveedoresActivos</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bi bi-bar-chart-line fs-1 text-danger"></i>
+                            <h6 class="fw-bold text-secondary mt-2">Promedio Mensual (Gal)</h6>
+                            <h4 class="fw-bold text-dark">@ViewBag.PromedioMensual</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // === Datos desde ViewBag ===
+        const consumoMensual = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.ConsumoMensual));
+        const comprasProveedor = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.ComprasProveedor));
+
+        // === Gráfico de Consumo Mensual ===
+        const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+        const etiquetas = consumoMensual.map(c => meses[c.Mes - 1]);
+        const valores = consumoMensual.map(c => c.Total);
+
+        new Chart(document.getElementById('chartConsumoMensual'), {
+            type: 'line',
+            data: {
+                labels: etiquetas,
+                datasets: [{
+                    label: 'Galones Consumidos',
+                    data: valores,
+                    borderColor: '#C8102E',
+                    backgroundColor: 'rgba(200,16,46,0.2)',
+                    tension: 0.3,
+                    fill: true,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // === Gráfico de Compras por Proveedor ===
+        const etiquetasProv = comprasProveedor.map(c => c.Proveedor);
+        const valoresProv = comprasProveedor.map(c => c.Total);
+        const colores = ['#C8102E','#FF5733','#900C3F','#B03A2E','#884EA0','#1F618D','#117A65','#7B241C','#5B2C6F'];
+
+        new Chart(document.getElementById('chartComprasProveedor'), {
+            type: 'doughnut',
+            data: {
+                labels: etiquetasProv,
+                datasets: [{
+                    data: valoresProv,
+                    backgroundColor: colores,
+                    borderWidth: 1,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 15 } }
+                },
+                cutout: '65%'
+            }
+        });
+    </script>
+}
