@@ -1,0 +1,58 @@
+﻿@model SISCOMBUST.Models.Usuario
+@{
+    ViewData["Title"] = "Nuevo Usuario";
+}
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header text-white" style="background-color:#C8102E;">
+            <h5 class="mb-0"><i class="bi bi-person-plus-fill"></i> Registrar Nuevo Usuario</h5>
+        </div>
+        <div class="card-body bg-light">
+            <form asp-action="Create">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="NombreCompleto" class="form-label fw-bold">Nombre Completo</label>
+                        <input asp-for="NombreCompleto" class="form-control" placeholder="Nombre completo del usuario" />
+                        <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="NombreUsuario" class="form-label fw-bold">Nombre de Usuario</label>
+                        <input asp-for="NombreUsuario" class="form-control" placeholder="Nombre de usuario" />
+                        <span asp-validation-for="NombreUsuario" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Password" class="form-label fw-bold">Password</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Contraseña" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Rol" class="form-label fw-bold">Rol</label>
+                        <select asp-for="Rol" class="form-select">
+                            <option value="">-- Seleccione un rol --</option>
+                            <option>Administrador</option>
+                            <option>Logística</option>
+                            <option>Supervisor</option>
+                            <option>Operario</option>
+                        </select>
+                        <span asp-validation-for="Rol" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a asp-action="Index" class="btn btn-secondary me-2"><i class="bi bi-arrow-left"></i> Volver</a>
+                    <button type="submit" class="btn text-white fw-bold" style="background-color:#C8102E;">
+                        <i class="bi bi-save-fill"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

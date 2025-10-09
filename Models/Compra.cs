@@ -39,5 +39,12 @@ namespace SISCOMBUST.Models
 
         [StringLength(200)]
         public string? Observacion { get; set; }
+
+        [Display(Name = "Solicitud de Compra")]
+        public int? IdSolicitud { get; set; }
+
+        [ForeignKey("IdSolicitud")]
+        public SolicitudCompra? SolicitudCompra { get; set; }
+
     }
 }

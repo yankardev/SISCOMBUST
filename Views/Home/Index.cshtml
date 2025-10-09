@@ -16,13 +16,24 @@
         </div>
         <div>
             <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-2 rounded-pill fw-semibold">
-                <i class="bi bi-person-badge"></i> Supervisor de Combustible
+                <i class="bi bi-person-badge"></i> ACTIVO
             </span>
         </div>
     </div>
 
     <!-- TARJETAS RESUMEN -->
     <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-center">
+                <div class="card-body">
+                    <i class="bi bi-fuel-pump fs-1 text-danger"></i>
+                    <h6 class="fw-bold mt-2 text-secondary">Stock Disponible</h6>
+                    <h4 class="fw-bold">@ViewBag.StockActual.ToString("N2") gal</h4>
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-3 col-sm-6">
             <div class="card shadow-sm border-0 text-center">
                 <div class="card-body">

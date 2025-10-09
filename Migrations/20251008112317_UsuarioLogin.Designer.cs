@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SISCOMBUST.Data;
 
@@ -11,9 +12,11 @@ using SISCOMBUST.Data;
 namespace SISCOMBUST.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251008112317_UsuarioLogin")]
+    partial class UsuarioLogin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,9 +42,6 @@ namespace SISCOMBUST.Migrations
                     b.Property<int>("IdProveedor")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdSolicitud")
-                        .HasColumnType("int");
-
                     b.Property<string>("NumeroFactura")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -56,8 +56,6 @@ namespace SISCOMBUST.Migrations
                     b.HasKey("IdCompra");
 
                     b.HasIndex("IdProveedor");
-
-                    b.HasIndex("IdSolicitud");
 
                     b.ToTable("Compras");
                 });
@@ -106,6 +104,29 @@ namespace SISCOMBUST.Migrations
                     b.HasKey("IdConsumo");
 
                     b.ToTable("Consumos");
+                });
+
+            modelBuilder.Entity("SISCOMBUST.Models.Operacion", b =>
+                {
+                    b.Property<int>("IdOperacion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdOperacion"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("NombreOperacion")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("IdOperacion");
+
+                    b.ToTable("Operaciones");
                 });
 
             modelBuilder.Entity("SISCOMBUST.Models.Proveedor", b =>
@@ -181,23 +202,32 @@ namespace SISCOMBUST.Migrations
                     b.ToTable("SolicitudesCompra");
                 });
 
-            modelBuilder.Entity("SISCOMBUST.Models.StockCombustible", b =>
+            modelBuilder.Entity("SISCOMBUST.Models.Unidad", b =>
                 {
-                    b.Property<int>("IdStock")
+                    b.Property<int>("IdUnidad")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdStock"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUnidad"));
 
-                    b.Property<DateTime>("FechaActualizacion")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("IdOperacion")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("GalonesDisponibles")
-                        .HasColumnType("decimal(10,2)");
+                    b.Property<string>("Placa")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("IdStock");
+                    b.Property<string>("TipoUnidad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.ToTable("StockCombustible");
+                    b.HasKey("IdUnidad");
+
+                    b.HasIndex("IdOperacion");
+
+                    b.ToTable("Unidades");
                 });
 
             modelBuilder.Entity("SISCOMBUST.Models.Usuario", b =>
@@ -208,47 +238,28 @@ namespace SISCOMBUST.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
 
-                    b.Property<string>("NombreCompleto")
+                    b.Property<string>("Clave")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("NombreUsuario")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
+                    b.Property<string>("NombreCompleto")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Rol")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("UsuarioLogin")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("IdUsuario");
 
                     b.ToTable("Usuarios");
-
-                    b.HasData(
-                        new
-                        {
-                            IdUsuario = 20250001,
-                            NombreCompleto = "",
-                            NombreUsuario = "admin",
-                            Password = "admin",
-                            Rol = "Administrador"
-                        },
-                        new
-                        {
-                            IdUsuario = 2025002,
-                            NombreCompleto = "",
-                            NombreUsuario = "operador",
-                            Password = "operador",
-                            Rol = "Operador"
-                        });
                 });
 
             modelBuilder.Entity("SISCOMBUST.Models.Compra", b =>
@@ -259,13 +270,7 @@ namespace SISCOMBUST.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SISCOMBUST.Models.SolicitudCompra", "SolicitudCompra")
-                        .WithMany()
-                        .HasForeignKey("IdSolicitud");
-
                     b.Navigation("Proveedor");
-
-                    b.Navigation("SolicitudCompra");
                 });
 
             modelBuilder.Entity("SISCOMBUST.Models.SolicitudCompra", b =>
@@ -277,6 +282,17 @@ namespace SISCOMBUST.Migrations
                         .IsRequired();
 
                     b.Navigation("Proveedor");
+                });
+
+            modelBuilder.Entity("SISCOMBUST.Models.Unidad", b =>
+                {
+                    b.HasOne("SISCOMBUST.Models.Operacion", "Operacion")
+                        .WithMany()
+                        .HasForeignKey("IdOperacion")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Operacion");
                 });
 #pragma warning restore 612, 618
         }

@@ -26,6 +26,8 @@ namespace SISCOMBUST.Controllers
             var solicitudesPendientes = await _context.SolicitudesCompra.CountAsync(s => s.Estado == "Pendiente");
             var comprasTotales = await _context.Compras.CountAsync();
             var consumosTotales = await _context.Consumos.CountAsync();
+            var stock = await _context.StockCombustible.FirstOrDefaultAsync();
+
 
             // 📈 Gráfico mensual de consumo
             var consumoMensual = await _context.Consumos
@@ -67,6 +69,7 @@ namespace SISCOMBUST.Controllers
             ViewBag.ConsumosTotales = consumosTotales;
             ViewBag.ConsumoMensual = consumoMensual;
             ViewBag.ComprasProveedor = comprasProveedor;
+            ViewBag.StockActual = stock?.GalonesDisponibles ?? 0;
 
             ViewBag.GalonesAnuales = galonesAnuales;
             ViewBag.OperacionesUnicas = operacionesUnicas;

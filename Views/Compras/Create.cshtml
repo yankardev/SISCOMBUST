@@ -17,6 +17,14 @@
                     <span asp-validation-for="FechaCompra" class="text-danger"></span>
                 </div>
 
+                <div class="mb-3">
+                    <label asp-for="IdSolicitud" class="form-label fw-bold"></label>
+                    <select asp-for="IdSolicitud" class="form-select" asp-items="ViewBag.IdSolicitud">
+                        <option value="">-- Seleccione una solicitud pendiente --</option>
+                    </select>
+                </div>
+
+
                 <div class="col-md-4">
                     <label asp-for="IdProveedor" class="form-label fw-bold"></label>
                     <select asp-for="IdProveedor" class="form-select" asp-items="ViewBag.IdProveedor">

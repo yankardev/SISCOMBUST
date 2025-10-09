@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SISCOMBUST.Data;
 
@@ -11,9 +12,11 @@ using SISCOMBUST.Data;
 namespace SISCOMBUST.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251009045657_AddRelacionSolicitudCompra")]
+    partial class AddRelacionSolicitudCompra
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,25 +182,6 @@ namespace SISCOMBUST.Migrations
                     b.HasIndex("IdProveedor");
 
                     b.ToTable("SolicitudesCompra");
-                });
-
-            modelBuilder.Entity("SISCOMBUST.Models.StockCombustible", b =>
-                {
-                    b.Property<int>("IdStock")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdStock"));
-
-                    b.Property<DateTime>("FechaActualizacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("GalonesDisponibles")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.HasKey("IdStock");
-
-                    b.ToTable("StockCombustible");
                 });
 
             modelBuilder.Entity("SISCOMBUST.Models.Usuario", b =>

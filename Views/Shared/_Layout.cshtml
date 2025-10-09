@@ -114,9 +114,18 @@
 <body>
     <!-- 🔴 Sidebar -->
     <div class="sidebar">
+        <div>
+            <a asp-controller="Auth" asp-action="Logout" class="text-white small">Cerrar sesión</a>
+        </div>
         <div class="logo mb-3">
             <i class="bi bi-fuel-pump-fill"></i> SISCOMBUST
         </div>
+        <div class="text-center mb-3 border-bottom pb-3">
+            <i class="bi bi-person-circle fs-3"></i>
+            <h6 class="mt-2 mb-0 fw-bold">@Context.Session.GetString("NombreCompleto")</h6>
+            <small class="text-light-50">@Context.Session.GetString("Rol")</small>
+        </div>
+
         <a asp-controller="Home" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
             <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
         </a>
@@ -132,6 +141,11 @@
         <a asp-controller="Consumos" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Consumos" ? "active" : "")">
             <i class="bi bi-graph-up-arrow"></i> <span>Consumos</span>
         </a>
+
+        <a asp-controller="Usuarios" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Usuarios" ? "active" : "")">
+            <i class="bi bi-people-fill"></i> <span>Usuarios</span>
+        </a>
+
     </div>
 
     <!-- 📄 Contenido -->

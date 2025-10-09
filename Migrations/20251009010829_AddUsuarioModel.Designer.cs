@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SISCOMBUST.Data;
 
@@ -11,9 +12,11 @@ using SISCOMBUST.Data;
 namespace SISCOMBUST.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251009010829_AddUsuarioModel")]
+    partial class AddUsuarioModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,9 +42,6 @@ namespace SISCOMBUST.Migrations
                     b.Property<int>("IdProveedor")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdSolicitud")
-                        .HasColumnType("int");
-
                     b.Property<string>("NumeroFactura")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -56,8 +56,6 @@ namespace SISCOMBUST.Migrations
                     b.HasKey("IdCompra");
 
                     b.HasIndex("IdProveedor");
-
-                    b.HasIndex("IdSolicitud");
 
                     b.ToTable("Compras");
                 });
@@ -181,25 +179,6 @@ namespace SISCOMBUST.Migrations
                     b.ToTable("SolicitudesCompra");
                 });
 
-            modelBuilder.Entity("SISCOMBUST.Models.StockCombustible", b =>
-                {
-                    b.Property<int>("IdStock")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdStock"));
-
-                    b.Property<DateTime>("FechaActualizacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("GalonesDisponibles")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.HasKey("IdStock");
-
-                    b.ToTable("StockCombustible");
-                });
-
             modelBuilder.Entity("SISCOMBUST.Models.Usuario", b =>
                 {
                     b.Property<int>("IdUsuario")
@@ -207,11 +186,6 @@ namespace SISCOMBUST.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
-
-                    b.Property<string>("NombreCompleto")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NombreUsuario")
                         .IsRequired()
@@ -236,7 +210,6 @@ namespace SISCOMBUST.Migrations
                         new
                         {
                             IdUsuario = 20250001,
-                            NombreCompleto = "",
                             NombreUsuario = "admin",
                             Password = "admin",
                             Rol = "Administrador"
@@ -244,7 +217,6 @@ namespace SISCOMBUST.Migrations
                         new
                         {
                             IdUsuario = 2025002,
-                            NombreCompleto = "",
                             NombreUsuario = "operador",
                             Password = "operador",
                             Rol = "Operador"
@@ -259,13 +231,7 @@ namespace SISCOMBUST.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SISCOMBUST.Models.SolicitudCompra", "SolicitudCompra")
-                        .WithMany()
-                        .HasForeignKey("IdSolicitud");
-
                     b.Navigation("Proveedor");
-
-                    b.Navigation("SolicitudCompra");
                 });
 
             modelBuilder.Entity("SISCOMBUST.Models.SolicitudCompra", b =>

@@ -7,16 +7,20 @@ namespace SISCOMBUST.Models
         [Key]
         public int IdUsuario { get; set; }
 
-        [Required, StringLength(100)]
-        public string Nombre { get; set; }
+        [StringLength(100)]
+        public string NombreCompleto { get; set; } = string.Empty;
 
-        [Required, StringLength(50)]
-        public string UsuarioLogin { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string NombreUsuario { get; set; } = string.Empty;
 
-        [Required, StringLength(50)]
-        public string Clave { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string Password { get; set; } = string.Empty;
 
-        [Required, StringLength(30)]
-        public string Rol { get; set; } // Supervisor, Logistica, Gerencia
+        [StringLength(20)]
+        public string Rol { get; set; } = "Usuario"; // Por defecto
+
+
     }
 }

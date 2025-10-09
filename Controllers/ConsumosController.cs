@@ -60,6 +60,16 @@ namespace SISCOMBUST.Controllers
             {
                 _context.Add(consumo);
                 await _context.SaveChangesAsync();
+
+                // 🔻 Descontar del stock
+                var stock = await _context.StockCombustible.FirstOrDefaultAsync();
+                if (stock != null)
+                {
+                    stock.GalonesDisponibles -= consumo.GalonesConsumidos;
+                    stock.FechaActualizacion = DateTime.Now;
+                    _context.StockCombustible.Update(stock);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(consumo);

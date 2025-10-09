@@ -1,5 +1,16 @@
 ﻿@model IEnumerable<SISCOMBUST.Models.Compra>
 
+@if (ViewBag.SolicitudesPendientes > 0)
+{
+    <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <strong>Atención:</strong> Hay @ViewBag.SolicitudesPendientes solicitud(es) de compra pendiente(s).
+        <a asp-controller="SolicitudCompras" asp-action="Index" class="alert-link">Ver solicitudes</a>.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+
 @{
     ViewData["Title"] = "Compras Realizadas";
     var totalGalones = Model?.Sum(c => c.GalonesComprados) ?? 0;

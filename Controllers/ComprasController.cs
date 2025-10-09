@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SISCOMBUST.Data;
+using SISCOMBUST.Filters;
 using SISCOMBUST.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SISCOMBUST.Controllers
 {
+    [RolAuthorize("Logística", "Administrador")] // Solo estos roles pueden acceder
     public class ComprasController : Controller
     {
         private readonly AppDbContext _context;
@@ -24,8 +26,15 @@ namespace SISCOMBUST.Controllers
                 .Include(c => c.Proveedor)
                 .OrderByDescending(c => c.FechaCompra)
                 .ToListAsync();
+
+            var solicitudesPendientes = await _context.SolicitudesCompra
+                .CountAsync(s => s.Estado == "Pendiente");
+
+            ViewBag.SolicitudesPendientes = solicitudesPendientes;
+
             return View(compras);
         }
+
 
         // GET: Compras/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -44,25 +53,66 @@ namespace SISCOMBUST.Controllers
         // GET: Compras/Create
         public IActionResult Create()
         {
+            // 🔸 Solo solicitudes pendientes
+            var solicitudesPendientes = _context.SolicitudesCompra
+                .Where(s => s.Estado == "Pendiente")
+                .Include(s => s.Proveedor)
+                .Select(s => new
+                {
+                    s.IdSolicitud,
+                    Descripcion = "Solicitud #" + s.IdSolicitud + " - " + s.Proveedor.NombreProveedor + " (" + s.GalonesSolicitados + " gal)"
+                })
+                .ToList();
+
+            ViewData["IdSolicitud"] = new SelectList(solicitudesPendientes, "IdSolicitud", "Descripcion");
             ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "NombreProveedor");
             return View();
         }
 
+
         // POST: Compras/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdCompra,FechaCompra,IdProveedor,GalonesComprados,PrecioPorGalon,NumeroFactura,Observacion")] Compra compra)
+        public async Task<IActionResult> Create([Bind("IdCompra,FechaCompra,IdProveedor,GalonesComprados,PrecioPorGalon,NumeroFactura,Observacion,IdSolicitud")] Compra compra)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(compra);
+
+                // 🔄 Si tiene una solicitud asociada, se marca como "Atendida"
+                if (compra.IdSolicitud.HasValue)
+                {
+                    var solicitud = await _context.SolicitudesCompra.FindAsync(compra.IdSolicitud.Value);
+                    if (solicitud != null)
+                    {
+                        solicitud.Estado = "Atendida";
+                        _context.Update(solicitud);
+                    }
+                }
+
+                // 🔹 Actualizar stock
+                var stock = await _context.StockCombustible.FirstOrDefaultAsync();
+                if (stock == null)
+                {
+                    stock = new StockCombustible { GalonesDisponibles = compra.GalonesComprados };
+                    _context.StockCombustible.Add(stock);
+                }
+                else
+                {
+                    stock.GalonesDisponibles += compra.GalonesComprados;
+                    stock.FechaActualizacion = DateTime.Now;
+                    _context.StockCombustible.Update(stock);
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewData["IdSolicitud"] = new SelectList(_context.SolicitudesCompra.Where(s => s.Estado == "Pendiente"), "IdSolicitud", "IdSolicitud", compra.IdSolicitud);
             ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "NombreProveedor", compra.IdProveedor);
             return View(compra);
         }
+
 
         // GET: Compras/Edit/5
         public async Task<IActionResult> Edit(int? id)

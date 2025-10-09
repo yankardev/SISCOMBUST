@@ -1,0 +1,33 @@
+﻿@model SISCOMBUST.Models.Usuario
+@{
+    ViewData["Title"] = "Detalles del Usuario";
+}
+
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header text-white" style="background-color:#C8102E;">
+            <h5 class="mb-0"><i class="bi bi-info-circle-fill"></i> Detalles del Usuario</h5>
+        </div>
+        <div class="card-body bg-light">
+            <dl class="row">
+                <dt class="col-sm-3 fw-bold">Nombre Completo:</dt>
+                <dd class="col-sm-9">@Model.NombreCompleto</dd>
+
+                <dt class="col-sm-3 fw-bold">Usuario:</dt>
+                <dd class="col-sm-9">@Model.NombreUsuario</dd>
+
+                <dt class="col-sm-3 fw-bold">Rol:</dt>
+                <dd class="col-sm-9">@Model.Rol</dd>
+            </dl>
+
+            <div class="d-flex justify-content-end mt-3">
+                <a asp-action="Edit" asp-route-id="@Model.IdUsuario" class="btn btn-warning me-2">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
