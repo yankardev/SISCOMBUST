@@ -1,0 +1,68 @@
+﻿@model IEnumerable<SISCOMBUST.Models.Compra>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Reporte de Compras</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #C8102E;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #C8102E;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h2>Reporte de Compras</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Proveedor</th>
+                <th>Galones</th>
+                <th>Precio por Galón (S/)</th>
+                <th>Monto Total (S/)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.FechaCompra.ToShortDateString()</td>
+                    <td>@c.Proveedor?.NombreProveedor</td>
+                    <td>@c.GalonesComprados</td>
+                    <td>@c.PrecioPorGalon</td>
+                    <td>@c.MontoTotal</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

@@ -5,6 +5,20 @@
 }
 
 <div class="container mt-5">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-x-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
     <div class="card shadow border-0">
         <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color:#C8102E;">
             <h4 class="mb-0"><i class="bi bi-file-earmark-text-fill"></i> Solicitudes de Compra</h4>
@@ -39,18 +53,19 @@
                                 <td>@item.PrecioReferencial</td>
                                 <td>@item.MontoEstimado</td>
                                 <td>
-                                    @if (item.Estado == "Aprobado")
+                                    @if (item.Estado == "Atendida")
                                     {
-                                        <span class="badge bg-success">@item.Estado</span>
+                                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> @item.Estado</span>
                                     }
-                                    else if (item.Estado == "Rechazado")
+                                    else if (item.Estado == "Rechazada")
                                     {
-                                        <span class="badge bg-danger">@item.Estado</span>
+                                        <span class="badge bg-danger"><i class="bi bi-x-circle"></i> @item.Estado</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-warning text-dark">@item.Estado</span>
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split"></i> Pendiente</span>
                                     }
+
                                 </td>
                                 <td>@item.Solicitante</td>
                                 <td class="text-center">
@@ -60,6 +75,16 @@
                                     <a asp-action="Details" asp-route-id="@item.IdSolicitud" class="btn btn-outline-info btn-sm mx-1" data-bs-toggle="tooltip" title="Ver detalles">
                                         <i class="bi bi-eye"></i>
                                     </a>
+                                    @if (item.Estado == "Pendiente")
+                                    {
+                                        <form asp-action="Rechazar" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.IdSolicitud" />
+                                            <button type="submit" class="btn btn-outline-danger btn-sm mx-1" data-bs-toggle="tooltip" title="Rechazar solicitud">
+                                                <i class="bi bi-x-circle"></i>
+                                            </button>
+                                        </form>
+                                    }
+
                                     <button type="button" class="btn btn-outline-danger btn-sm mx-1"
                                             data-bs-toggle="modal"
                                             data-bs-target="#deleteModal"
@@ -83,7 +108,17 @@
             </table>
         </div>
     </div>
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
 </div>
+
+
 
 <!-- Modal de eliminación -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

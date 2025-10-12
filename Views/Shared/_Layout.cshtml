@@ -112,6 +112,7 @@
 </head>
 
 <body>
+
     <!-- 🔴 Sidebar -->
     <div class="sidebar">
         <div>
@@ -138,6 +139,11 @@
         <a asp-controller="Compras" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Compras" ? "active" : "")">
             <i class="bi bi-basket-fill"></i> <span>Compras</span>
         </a>
+        <a asp-controller="Compras" asp-action="Reporte"
+           class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Reporte" ? "active" : "")">
+            <i class="bi bi-file-earmark-text"></i> <span>Reportes de Compras</span>
+        </a>
+
         <a asp-controller="Consumos" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Consumos" ? "active" : "")">
             <i class="bi bi-graph-up-arrow"></i> <span>Consumos</span>
         </a>
@@ -147,7 +153,6 @@
         </a>
 
     </div>
-
     <!-- 📄 Contenido -->
     <div class="content">
         <!-- Barra superior -->

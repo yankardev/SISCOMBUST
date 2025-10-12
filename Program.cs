@@ -1,6 +1,8 @@
-﻿using SISCOMBUST.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using SISCOMBUST.Data;
 using SISCOMBUST.Filters;
+using System.ComponentModel;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +35,7 @@ if (!app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+Rotativa.AspNetCore.RotativaConfiguration.Setup(app.Environment.WebRootPath, "Rotativa");
 app.UseRouting();
 
 // 🔹 Activar sesión ANTES de autorización

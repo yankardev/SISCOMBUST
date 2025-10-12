@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SISCOMBUST.Data;
-using System;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SISCOMBUST.Controllers
 {
@@ -27,6 +23,8 @@ namespace SISCOMBUST.Controllers
             var comprasTotales = await _context.Compras.CountAsync();
             var consumosTotales = await _context.Consumos.CountAsync();
             var stock = await _context.StockCombustible.FirstOrDefaultAsync();
+            var stockActual = stock?.GalonesDisponibles ?? 0;
+            var stockCritico = 2000; //VALOR UNMBRAL DE ALERTA
 
 
             // 📈 Gráfico mensual de consumo
@@ -75,6 +73,8 @@ namespace SISCOMBUST.Controllers
             ViewBag.OperacionesUnicas = operacionesUnicas;
             ViewBag.ProveedoresActivos = proveedoresActivos;
             ViewBag.PromedioMensual = Math.Round(promedioMensual, 2);
+            ViewBag.StockActual = stockActual;
+            ViewBag.EsCritico = stockActual < stockCritico;
 
             return View();
         }

@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Reporte de Compras";
+}
+
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header text-white fw-bold" style="background-color:#C8102E;">
+            <i class="bi bi-file-earmark-text"></i> Reporte de Compras
+        </div>
+        <div class="card-body">
+            <form asp-action="GenerarReporte" method="post" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-secondary">Desde</label>
+                    <input type="date" name="fechaInicio" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-secondary">Hasta</label>
+                    <input type="date" name="fechaFin" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold text-secondary">Proveedor</label>
+                    <select asp-items="ViewBag.IdProveedor" name="IdProveedor" class="form-select">
+                        <option value="">-- Todos --</option>
+                    </select>
+                </div>
+                <div class="col-md-3 text-center">
+                    <button type="submit" name="formato" value="pdf" class="btn text-white fw-bold w-100 mb-2" style="background-color:#C8102E;">
+                        <i class="bi bi-filetype-pdf"></i> Exportar PDF
+                    </button>
+                    <button type="submit" name="formato" value="excel" class="btn btn-outline-success fw-bold w-100">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

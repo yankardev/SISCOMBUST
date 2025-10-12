@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SISCOMBUST.Data;
@@ -122,6 +118,25 @@ namespace SISCOMBUST.Controllers
             return View(solicitudCompra);
         }
 
+        // POST: SolicitudCompras/Rechazar/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rechazar(int id)
+        {
+            var solicitud = await _context.SolicitudesCompra.FindAsync(id);
+            if (solicitud == null)
+            {
+                return NotFound();
+            }
+
+            solicitud.Estado = "Rechazada";
+            _context.Update(solicitud);
+            await _context.SaveChangesAsync();
+
+            TempData["Mensaje"] = "La solicitud fue rechazada correctamente.";
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: SolicitudCompras/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -147,13 +162,23 @@ namespace SISCOMBUST.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var solicitudCompra = await _context.SolicitudesCompra.FindAsync(id);
-            if (solicitudCompra != null)
+            if (solicitudCompra == null)
+                return NotFound();
+
+            // 🚫 No permitir eliminar si ya fue atendida o rechazada
+            if (solicitudCompra.Estado == "Atendida" || solicitudCompra.Estado == "Rechazada")
             {
-                _context.SolicitudesCompra.Remove(solicitudCompra);
-                await _context.SaveChangesAsync();
+                TempData["Error"] = $"No se puede eliminar una solicitud con estado '{solicitudCompra.Estado}'.";
+                return RedirectToAction(nameof(Index));
             }
+
+            _context.SolicitudesCompra.Remove(solicitudCompra);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Solicitud eliminada correctamente.";
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool SolicitudCompraExists(int id)
         {

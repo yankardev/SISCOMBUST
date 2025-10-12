@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using ClosedXML.Excel;
+using Rotativa.AspNetCore;
 using SISCOMBUST.Data;
 using SISCOMBUST.Filters;
 using SISCOMBUST.Models;
-using System.Linq;
-using System.Threading.Tasks;
+
+
+
 
 namespace SISCOMBUST.Controllers
 {
@@ -28,7 +32,7 @@ namespace SISCOMBUST.Controllers
                 .ToListAsync();
 
             var solicitudesPendientes = await _context.SolicitudesCompra
-                .CountAsync(s => s.Estado == "Pendiente");
+             .CountAsync(s => s.Estado == "Pendiente");
 
             ViewBag.SolicitudesPendientes = solicitudesPendientes;
 
@@ -180,6 +184,86 @@ namespace SISCOMBUST.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Reporte()
+        {
+            ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "NombreProveedor");
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerarReporte(DateTime? fechaInicio, DateTime? fechaFin, int? IdProveedor, string formato)
+        {
+            var compras = _context.Compras.Include(c => c.Proveedor).AsQueryable();
+
+            if (fechaInicio.HasValue)
+                compras = compras.Where(c => c.FechaCompra >= fechaInicio.Value);
+            if (fechaFin.HasValue)
+                compras = compras.Where(c => c.FechaCompra <= fechaFin.Value);
+            if (IdProveedor.HasValue)
+                compras = compras.Where(c => c.IdProveedor == IdProveedor.Value);
+
+            var lista = await compras.OrderByDescending(c => c.FechaCompra).ToListAsync();
+
+            if (formato == "pdf")
+            {
+                return new ViewAsPdf("ReportePDF", lista)
+                {
+                    FileName = $"Reporte_Compras_{DateTime.Now:yyyyMMdd}.pdf"
+                };
+            }
+            else if (formato == "excel")
+            {
+                // Usa un nombre de archivo con la extensión .xlsx
+                string fileName = $"Reporte_Compras_{DateTime.Now:yyyyMMdd}.xlsx";
+
+                // Crea un nuevo libro de Excel
+                using (var workbook = new XLWorkbook())
+                {
+                    // Agrega una hoja de cálculo llamada "Compras"
+                    var worksheet = workbook.Worksheets.Add("Compras");
+
+                    // --- Encabezados ---
+                    var currentRow = 1;
+                    worksheet.Cell(currentRow, 1).Value = "Fecha";
+                    worksheet.Cell(currentRow, 2).Value = "Proveedor";
+                    worksheet.Cell(currentRow, 3).Value = "Galones";
+                    worksheet.Cell(currentRow, 4).Value = "Precio";
+                    worksheet.Cell(currentRow, 5).Value = "Monto Total";
+
+                    // Opcional: Poner los encabezados en negrita
+                    worksheet.Row(currentRow).Style.Font.Bold = true;
+
+                    // --- Datos ---
+                    foreach (var compra in lista)
+                    {
+                        currentRow++;
+                        worksheet.Cell(currentRow, 1).Value = compra.FechaCompra;
+                        worksheet.Cell(currentRow, 2).Value = compra.Proveedor.NombreProveedor;
+                        worksheet.Cell(currentRow, 3).Value = compra.GalonesComprados;
+                        worksheet.Cell(currentRow, 4).Value = compra.PrecioPorGalon;
+                        worksheet.Cell(currentRow, 5).Value = compra.MontoTotal;
+                    }
+
+                    // Opcional: Ajustar el ancho de las columnas al contenido
+                    worksheet.Columns().AdjustToContents();
+
+                    // --- Guardar y devolver el archivo ---
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+                        var content = stream.ToArray();
+
+                        return File(
+                            content,
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            fileName);
+                    }
+                }
+            }
+
+            return View("Reporte", lista);
         }
     }
 }

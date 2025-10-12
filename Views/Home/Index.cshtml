@@ -25,14 +25,24 @@
     <div class="row g-4">
 
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center">
+            <div class="card shadow-sm border-0 text-center @(ViewBag.EsCritico ? "border-danger" : "")">
                 <div class="card-body">
-                    <i class="bi bi-fuel-pump fs-1 text-danger"></i>
+                    <i class="bi bi-fuel-pump fs-1 @(ViewBag.EsCritico ? "text-danger" : "text-success")"></i>
                     <h6 class="fw-bold mt-2 text-secondary">Stock Disponible</h6>
-                    <h4 class="fw-bold">@ViewBag.StockActual.ToString("N2") gal</h4>
+                    <h4 class="fw-bold @(ViewBag.EsCritico ? "text-danger" : "text-dark")">
+                        @ViewBag.StockActual.ToString("N2") gal
+                    </h4>
+
+                    @if (ViewBag.EsCritico)
+                    {
+                        <div class="alert alert-danger py-2 mt-2 fw-bold" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> ¡Stock bajo! Reponer combustible.
+                        </div>
+                    }
                 </div>
             </div>
         </div>
+
 
         <div class="col-md-3 col-sm-6">
             <div class="card shadow-sm border-0 text-center">
